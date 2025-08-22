@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contáctanos - Instituto Cesicom</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background: #f8f8f8;
+    }
+
+    nav {
+      background: #0077b6; /* Azul */
+      padding: 10px 20px;
+      text-align: left; /* Barra a la izquierda */
+    }
+
+    nav a {
+      margin: 0 15px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #contactos {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .burbujas {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .galeria {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .galeria img {
+      max-width: 300px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+    }
+
+    #ubicacion3d {
+      width: 450px; /* Un poco más grande */
+      height: 450px;
+    }
+
+    footer {
+      text-align: center;
+      background: #0077b6; /* Azul */
+      color: white;
+      padding: 10px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="informacion.html">Información</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="ambientes.html">Ambientes</a>
+      <a href="contactos.html">Contactos</a>
+      <a href="estructura en 3D .html">Estructura en 3D</a>
+    </nav>
+  </header>
+
+  <section id="contactos">
+    <h2>Contáctanos</h2>
+    <div class="burbujas">
+      <p>👉 Para mayor información puedes contactarte al cel. <strong>71073933</strong><br>
+         🔥 <strong>CESICOM Instituto Técnico</strong></p>
+      <p>📍 Puedes ubicarnos en <strong>Llallagua, Av. Mariscal Santa Cruz, al lado de la Alcaldía</strong>.</p>
+    </div>
+
+    <div class="galeria">
+      <img src="https://cdn.glitch.global/fd9d168b-e43f-41d3-b2c5-433c4e8ca37f/WhatsApp%20Image%202025-05-28%20at%2013.42.51.jpeg?v=1748458221162" />
+      <div id="ubicacion3d"></div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Instituto Cesicom - Llallagua
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+  <script>
+    let scene, camera, renderer, marcador;
+
+    function crearMarcador3D() {
+      const shape = new THREE.Shape();
+      shape.moveTo(0, -2);
+      shape.quadraticCurveTo(2, 1.5, 0, 4);
+      shape.quadraticCurveTo(-2, 1.5, 0, -2);
+
+      const holePath = new THREE.Path();
+      holePath.absellipse(0, 1.5, 0.6, 0.6, 0, Math.PI * 2, true);
+      shape.holes.push(holePath);
+
+      const geometry = new THREE.ExtrudeGeometry(shape, {
+        depth: 0.4,
+        bevelEnabled: false,
+      });
+
+      const material = new THREE.MeshStandardMaterial({ color: "#e63946" }); // Rojo
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.rotation.x = Math.PI;
+      mesh.scale.set(1.3, 1.3, 1.3); // Más grande
+      return mesh;
+    }
+
+    function init() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+      camera.position.z = 8;
+
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(450, 450);
+      document.getElementById("ubicacion3d").appendChild(renderer.domElement);
+
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(5, 5, 5);
+      scene.add(light);
+
+      const ambient = new THREE.AmbientLight(0x404040);
+      scene.add(ambient);
+
+      marcador = crearMarcador3D();
+      scene.add(marcador);
+
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      marcador.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+
+    init();
+  </script>
+</body>
+</html>

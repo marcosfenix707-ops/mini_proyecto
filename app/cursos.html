@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cursos - Instituto Cesicom</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+    }
+
+    nav {
+      background-color: #003366;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-top: 20px;
+    }
+
+    .burbujas {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    /* 👉 Galería + Computadora en una fila */
+    .contenedor-flex {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start; /* arriba */
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .galeria img {
+      width: 250px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transform-style: preserve-3d;
+      animation: girar 5s linear infinite;
+      transition: transform 0.3s;
+    }
+
+    @keyframes girar {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(360deg); }
+    }
+
+    /* 👉 Computadora sin fondo */
+    #canvas-container {
+      width: 400px;
+      height: 300px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: #003366;
+      color: white;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="informacion.html">Información</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="ambientes.html">Ambientes</a>
+      <a href="contactos.html">Contactos</a>
+      <a href="estructura en 3D .html">Estrucutura en 3D</a>
+    </nav>
+  </header>
+
+  <section id="cursos">
+    <h2>Cursos</h2>
+    <div class="burbujas">
+      <p>🎓 Ofrece carreras y cursos de capacitación en informática.</p>
+      <p>👉 Entre sus programas, se encuentra la carrera de <strong>"Programador de Sistemas"</strong>.</p>
+      <p>👉 También ofrecen capacitación en <strong>"Paquetes Informáticos de Aplicación"</strong>.</p>
+    </div>
+
+    <!-- Galería + Computadora en la misma fila -->
+    <div class="contenedor-flex">
+      <div class="galeria">
+        <img src="https://cdn.glitch.global/fd9d168b-e43f-41d3-b2c5-433c4e8ca37f/cursos.jpg?v=1748458100699" alt="Cursos ofrecidos en el instituto">
+      </div>
+      <div id="canvas-container"></div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Instituto Cesicom - Llallagua
+  </footer>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+  let scene, camera, renderer;
+  let computadora;
+
+  function crearComputadora() {
+    computadora = new THREE.Group();
+
+    // --- Pantalla (vidrio con reflejo azul) ---
+    const materialPantalla = new THREE.MeshStandardMaterial({
+      color: 0x1a2d6d,  // azul oscuro
+      metalness: 0.8,
+      roughness: 0.2,
+      emissive: 0x112244, // leve brillo
+      emissiveIntensity: 0.3
+    });
+    const pantalla = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 0.2), materialPantalla);
+    pantalla.position.set(0, 2.5, 0);
+    computadora.add(pantalla);
+
+    // --- Marco metálico ---
+    const materialMarco = new THREE.MeshStandardMaterial({
+      color: 0x0a0a1f, // azul casi negro
+      metalness: 1,
+      roughness: 0.3
+    });
+    const marco = new THREE.Mesh(new THREE.BoxGeometry(4.3, 3.3, 0.3), materialMarco);
+    marco.position.set(0, 2.5, -0.05);
+    computadora.add(marco);
+
+    // --- Base/CPU (plateada) ---
+    const materialCPU = new THREE.MeshStandardMaterial({
+      color: 0xc0c0c0, // plateado
+      metalness: 0.9,
+      roughness: 0.4
+    });
+    const cpu = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.7, 2.2), materialCPU);
+    cpu.position.set(0, 0.35, 0);
+    computadora.add(cpu);
+
+    // --- Teclado (plateado más oscuro) ---
+    const materialTeclado = new THREE.MeshStandardMaterial({
+      color: 0xa9a9a9,
+      metalness: 0.7,
+      roughness: 0.5
+    });
+    const teclado = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.2, 2.5), materialTeclado);
+    teclado.position.set(0, 0.1, 2.2);
+    computadora.add(teclado);
+
+    // --- Soporte (gris oscuro metálico) ---
+    const materialSoporte = new THREE.MeshStandardMaterial({
+      color: 0x333333,
+      metalness: 0.8,
+      roughness: 0.3
+    });
+    const soporte = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.2, 0.5), materialSoporte);
+    soporte.position.set(0, 1.3, 0);
+    computadora.add(soporte);
+
+    // 👉 Hacemos la compu más grande
+    computadora.scale.set(1.5, 1.5, 1.5);
+
+    scene.add(computadora);
+  }
+
+  function luces() {
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    const directional = new THREE.DirectionalLight(0xffffff, 1);
+    directional.position.set(5, 10, 7);
+    scene.add(ambient, directional);
+
+    // 👉 Luz azul para reflejos cool
+    const blueLight = new THREE.PointLight(0x1e90ff, 0.6, 20);
+    blueLight.position.set(-5, 5, 5);
+    scene.add(blueLight);
+  }
+
+  function init() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, 400 / 300, 0.1, 100);
+    camera.position.set(8, 6, 12);
+    camera.lookAt(0, 2, 0);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(400, 300);
+    renderer.setClearColor(0x000000, 0); // fondo transparente
+    document.getElementById("canvas-container").appendChild(renderer.domElement);
+
+    crearComputadora();
+    luces();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (computadora) computadora.rotation.y += 0.01;
+    renderer.render(scene, camera);
+  }
+
+  init();
+  animate();
+</script>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+  
+
+  
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+  
+</body>
+</html>

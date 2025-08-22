@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Información - Instituto Cesicom</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+    }
+
+    nav {
+      background-color: #003366;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-top: 20px;
+    }
+
+    /* Flexbox para contenido + figura 3D */
+    .contenedor-flex {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 30px;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Ahora el canvas será más grande */
+    #canvas-container {
+      width: 600px;   /* antes 400px */
+      height: 500px;  /* antes 350px */
+    }
+
+    .contenido {
+      max-width: 600px;
+    }
+
+    .burbujas {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    .galeria {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      padding: 20px 0;
+    }
+
+    .galeria img {
+      width: 250px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transform-style: preserve-3d;
+      animation: girar 5s linear infinite;
+      transition: transform 0.3s;
+    }
+
+    @keyframes girar {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(360deg); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: #003366;
+      color: white;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="informacion.html">Información</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="ambientes.html">Ambientes</a>
+      <a href="contactos.html">Contactos</a>
+      <a href="estructura E.html">Estrucutura en 3D</a>
+    </nav>
+  </header>
+
+  <section id="informacion">
+    <h2>Información</h2>
+    <div class="contenedor-flex">
+      <!-- Contenido a la izquierda -->
+      <div class="contenido">
+        <div class="burbujas">
+          <p>El Instituto Técnico de Informática "CESICOM" es una institución educativa que ofrece formación en el área de la informática.</p>
+          <p>Desde 1998, ha estado formando profesionales, enfocándose en métodos de enseñanza modernos.</p>
+          <p>Características:<br>
+          👉 Es un instituto de carácter privado.<br>
+          👉 Cuenta con laboratorios de computación y material didáctico actualizado.</p>
+        </div>
+
+        <div class="galeria">
+          <img src="https://cdn.glitch.global/fd9d168b-e43f-41d3-b2c5-433c4e8ca37f/afuera_cesicom.jpeg?v=1748457785868" alt="Frente del Instituto Cesicom" />
+          <img src="https://cdn.glitch.global/fd9d168b-e43f-41d3-b2c5-433c4e8ca37f/afuera.jpeg?v=1748457815273" alt="Vista exterior del Instituto Cesicom" />
+        </div>
+      </div>
+
+      <!-- Figura 3D a la derecha -->
+      <div id="canvas-container"></div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Instituto Cesicom - Llallagua
+  </footer>
+
+  <!-- THREE.JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    let scene, camera, renderer, libreta, lupa, grupo;
+
+    function crearLibreta() {
+      libreta = new THREE.Group();
+      const portadaMat = new THREE.MeshStandardMaterial({ color: 0x0044aa, roughness: 0.6, metalness: 0.2 });
+      const portada = new THREE.Mesh(new THREE.BoxGeometry(6, 0.2, 8), portadaMat);
+      portada.position.set(0, 0, 0);
+      libreta.add(portada);
+
+      const contraMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.6 });
+      const contraportada = new THREE.Mesh(new THREE.BoxGeometry(6, 0.2, 8), contraMat);
+      contraportada.position.set(0, -1, 0);
+      libreta.add(contraportada);
+
+      const hojasMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+      const hojas = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.6, 7.8), hojasMat);
+      hojas.position.set(0, -0.5, 0);
+      libreta.add(hojas);
+
+      libreta.rotation.x = -0.3;
+      libreta.rotation.y = 0.4;
+      libreta.position.y = -2;
+      scene.add(libreta);
+    }
+
+    function crearLupa() {
+      lupa = new THREE.Group();
+      const materialVidrio = new THREE.MeshPhysicalMaterial({
+        color: 0x99ccff, transparent: true, opacity: 0.5, roughness: 0.05,
+        transmission: 1.0, thickness: 0.5, clearcoat: 1.0, clearcoatRoughness: 0.1
+      });
+      const lente = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, 0.25, 64), materialVidrio);
+      lente.rotation.x = Math.PI / 2;
+      lupa.add(lente);
+
+      const materialMarco = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.3 });
+      const marco = new THREE.Mesh(new THREE.TorusGeometry(2.6, 0.15, 32, 100), materialMarco);
+      marco.rotation.x = Math.PI / 2;
+      lupa.add(marco);
+
+      const materialMango = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.7, roughness: 0.4 });
+      const mango = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 4, 32), materialMango);
+      mango.position.set(0, -3, 0);
+      lupa.add(mango);
+
+      lupa.position.set(3, 1, 2);
+      lupa.rotation.z = 0.5;
+
+      scene.add(lupa);
+    }
+
+    function luces() {
+      const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+      const directional = new THREE.DirectionalLight(0xffffff, 1.2);
+      directional.position.set(8, 10, 5);
+      scene.add(ambient, directional);
+
+      const blueLight = new THREE.PointLight(0x1e90ff, 0.6, 20);
+      blueLight.position.set(-5, 5, 5);
+      scene.add(blueLight);
+    }
+
+    function init() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, 600/500, 0.1, 100); // Ajustamos proporción a nuevo tamaño
+      camera.position.set(10, 8, 14);
+      camera.lookAt(0, 0, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(600, 500); // nuevo tamaño
+      renderer.setClearColor(0x000000, 0); // fondo transparente
+      document.getElementById("canvas-container").appendChild(renderer.domElement);
+
+      crearLibreta();
+      crearLupa();
+      luces();
+
+      grupo = new THREE.Group();
+      grupo.add(libreta);
+      grupo.add(lupa);
+      scene.add(grupo);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      grupo.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+
+    init();
+    animate();
+  </script>
+</body>
+</html>
